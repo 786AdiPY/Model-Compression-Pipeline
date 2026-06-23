@@ -1,0 +1,45 @@
+steps:
+  # Build serve image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - gcr.io/$PROJECT_ID/xgb-churn-serve:$COMMIT_SHA
+      - -f
+      - serve/Dockerfile
+      - .
+    id: build-serve
+
+  # Push to GCR
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - push
+      - gcr.io/$PROJECT_ID/xgb-churn-serve:$COMMIT_SHA
+    id: push-serve
+    waitFor: [build-serve]
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - xgb-churn-serve
+      - --image=gcr.io/$PROJECT_ID/xgb-churn-serve:$COMMIT_SHA
+      - --region=$_REGION
+      - --platform=managed
+      - --allow-unauthenticated
+      - --memory=2Gi
+      - --cpu=2
+      - --concurrency=80
+      - --min-instances=1
+      - --max-instances=10
+      - --set-env-vars=MODEL_PKL=/artifacts/model.pkl,MODEL_ONNX=/artifacts/model_fp32.onnx,MODEL_TRT=/artifacts/model_int8.trt
+    id: deploy-cloudrun
+    waitFor: [push-serve]
+
+substitutions:
+  _REGION: us-central1
+
+options:
+  logging: CLOUD_LOGGING_ONLY

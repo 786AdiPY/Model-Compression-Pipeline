@@ -1,0 +1,116 @@
+name: XGB Compression Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  MLFLOW_TRACKING_URI: http://localhost:5000
+  MLFLOW_EXPERIMENT:   xgb-churn-compression
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: xgb-compression-pipeline
+
+    steps:
+      # ── Checkout ──────────────────────────────────────────────────────────
+      - uses: actions/checkout@v4
+
+      # ── Python + deps ─────────────────────────────────────────────────────
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # ── Start MLflow in background ────────────────────────────────────────
+      - name: Start MLflow server
+        run: |
+          mkdir -p mlflow_store/artifacts
+          mlflow server \
+            --host 0.0.0.0 \
+            --port 5000 \
+            --backend-store-uri sqlite:///mlflow_store/mlflow.db \
+            --default-artifact-root ./mlflow_store/artifacts &
+          sleep 8
+          curl -f http://localhost:5000/health || exit 1
+
+      # ── Generate data ─────────────────────────────────────────────────────
+      - name: Generate synthetic dataset
+        run: python data/generate.py --n 10000 --out data
+
+      # ── Train ─────────────────────────────────────────────────────────────
+      - name: Train XGBoost
+        run: |
+          mkdir -p artifacts
+          DATA_DIR=data MODEL_OUT=artifacts/model.pkl python train/train.py
+
+      # ── Compress ─────────────────────────────────────────────────────────
+      - name: Convert pkl → ONNX
+        run: |
+          MODEL_PKL=artifacts/model.pkl \
+          MODEL_ONNX=artifacts/model_fp32.onnx \
+          META_PATH=artifacts/model_meta.json \
+          python compress/to_onnx.py
+
+      - name: Convert ONNX → TRT (CPU fallback in CI)
+        run: |
+          MODEL_ONNX=artifacts/model_fp32.onnx \
+          MODEL_TRT=artifacts/model_int8.trt \
+          python compress/to_trt.py
+
+      # ── Benchmark ────────────────────────────────────────────────────────
+      - name: Benchmark all model versions
+        run: |
+          MODEL_PKL=artifacts/model.pkl \
+          MODEL_ONNX=artifacts/model_fp32.onnx \
+          MODEL_TRT=artifacts/model_int8.trt \
+          TEST_CSV=data/test.csv \
+          RESULTS_OUT=artifacts/benchmark_results.json \
+          python benchmark/benchmark.py
+
+      # ── Quality gate ─────────────────────────────────────────────────────
+      - name: Run quality gate
+        run: |
+          RESULTS_PATH=artifacts/benchmark_results.json \
+          GATE_REPORT_OUT=artifacts/gate_report.json \
+          python gate/gate.py
+
+      # ── Register ─────────────────────────────────────────────────────────
+      - name: Register best model to MLflow
+        run: |
+          RESULTS_PATH=artifacts/benchmark_results.json \
+          GATE_REPORT=artifacts/gate_report.json \
+          MODEL_PKL=artifacts/model.pkl \
+          MODEL_ONNX=artifacts/model_fp32.onnx \
+          MODEL_TRT=artifacts/model_int8.trt \
+          python registry/register.py
+
+      # ── Drift check ──────────────────────────────────────────────────────
+      - name: Feature drift detection
+        run: |
+          TRAIN_STATS_PATH=artifacts/model_train_stats.json \
+          INCOMING_CSV=data/test.csv \
+          DRIFT_REPORT_OUT=artifacts/drift_report.json \
+          python monitor/drift.py
+
+      # ── Upload artifacts ──────────────────────────────────────────────────
+      - name: Upload pipeline artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pipeline-artifacts-${{ github.sha }}
+          path: |
+            xgb-compression-pipeline/artifacts/benchmark_results.json
+            xgb-compression-pipeline/artifacts/gate_report.json
+            xgb-compression-pipeline/artifacts/drift_report.json
+            xgb-compression-pipeline/artifacts/model_meta.json
+          retention-days: 30
