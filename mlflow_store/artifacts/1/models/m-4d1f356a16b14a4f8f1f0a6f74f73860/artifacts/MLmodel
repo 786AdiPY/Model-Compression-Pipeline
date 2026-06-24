@@ -1,0 +1,22 @@
+artifact_path: file:E:/mlops pipeline for inference cost attribution/xgb-compression-pipeline/mlflow_store/artifacts/1/models/m-4d1f356a16b14a4f8f1f0a6f74f73860/artifacts
+flavors:
+  python_function:
+    data: model.ubj
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.xgboost
+    python_version: 3.13.2
+  xgboost:
+    code: null
+    data: model.ubj
+    model_class: xgboost.sklearn.XGBClassifier
+    model_format: ubj
+    xgb_version: 3.2.0
+mlflow_version: 3.14.0
+model_id: m-4d1f356a16b14a4f8f1f0a6f74f73860
+model_size_bytes: 874148
+model_uuid: m-4d1f356a16b14a4f8f1f0a6f74f73860
+prompts: null
+run_id: b7f327df3c6c4f659787f2217a89c31f
+utc_time_created: '2026-06-24 08:30:56.338395'

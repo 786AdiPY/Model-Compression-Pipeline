@@ -1,0 +1,26 @@
+[
+  {
+    "model": "pkl_xgboost",
+    "latency_ms": 3.818,
+    "accuracy": 0.9705,
+    "auc": 0.9907,
+    "model_size_kb": 859.6,
+    "speedup_vs_pkl": 1.0
+  },
+  {
+    "model": "onnx_fp32",
+    "latency_ms": 10.734,
+    "accuracy": 0.9705,
+    "auc": 0.9907,
+    "model_size_kb": 619.1,
+    "speedup_vs_pkl": 0.36
+  },
+  {
+    "model": "trt_int8_fallback_onnx",
+    "latency_ms": 10.465,
+    "accuracy": 0.9705,
+    "auc": 0.9907,
+    "model_size_kb": 619.1,
+    "speedup_vs_pkl": 0.36
+  }
+]

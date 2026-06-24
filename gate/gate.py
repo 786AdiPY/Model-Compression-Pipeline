@@ -3,10 +3,10 @@ import os
 import sys
 import json
 
-RESULTS_PATH    = os.getenv("RESULTS_PATH",    "/artifacts/benchmark_results.json")
+RESULTS_PATH    = os.getenv("RESULTS_PATH",    "artifacts/benchmark_results.json")
 MAX_ACC_DROP    = float(os.getenv("MAX_ACC_DROP",    "0.01"))   # 1 %
 MAX_AUC_DROP    = float(os.getenv("MAX_AUC_DROP",    "0.01"))   # 1 %
-GATE_REPORT_OUT = os.getenv("GATE_REPORT_OUT", "/artifacts/gate_report.json")
+GATE_REPORT_OUT = os.getenv("GATE_REPORT_OUT", "artifacts/gate_report.json")
 
 
 def load_results():

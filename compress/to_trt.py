@@ -8,8 +8,8 @@ import sys
 import json
 import numpy as np
 
-ONNX_PATH  = os.getenv("MODEL_ONNX", "/artifacts/model_fp32.onnx")
-TRT_PATH   = os.getenv("MODEL_TRT",  "/artifacts/model_int8.trt")
+ONNX_PATH  = os.getenv("MODEL_ONNX", "artifacts/model_fp32.onnx")
+TRT_PATH   = os.getenv("MODEL_TRT",  "artifacts/model_int8.trt")
 CALIB_ROWS = int(os.getenv("CALIB_ROWS", "1000"))
 
 
@@ -86,7 +86,7 @@ def build_trt_engine(onnx_path: str, trt_path: str, calib_rows: int):
             f.write(engine_bytes)
 
     sz_kb = os.path.getsize(trt_path) / 1024
-    print(f"TensorRT INT8 engine saved → {trt_path}  ({sz_kb:.1f} KB)")
+    print(f"TensorRT INT8 engine saved -> {trt_path}  ({sz_kb:.1f} KB)")
 
 
 def _write_fallback_marker(trt_path: str, onnx_path: str):
@@ -95,7 +95,7 @@ def _write_fallback_marker(trt_path: str, onnx_path: str):
     marker = {"fallback": True, "use_onnx": onnx_path}
     with open(trt_path + ".json", "w") as f:
         json.dump(marker, f)
-    print(f"Fallback marker written → {trt_path}.json")
+    print(f"Fallback marker written -> {trt_path}.json")
 
 
 if __name__ == "__main__":

@@ -8,9 +8,9 @@ import onnxruntime as ort
 from onnxmltools import convert_xgboost
 from onnxmltools.convert.common.data_types import FloatTensorType
 
-MODEL_PKL  = os.getenv("MODEL_PKL",  "/artifacts/model.pkl")
-MODEL_ONNX = os.getenv("MODEL_ONNX", "/artifacts/model_fp32.onnx")
-META_PATH  = os.getenv("META_PATH",  "/artifacts/model_meta.json")
+MODEL_PKL  = os.getenv("MODEL_PKL",  "artifacts/model.pkl")
+MODEL_ONNX = os.getenv("MODEL_ONNX", "artifacts/model_fp32.onnx")
+META_PATH  = os.getenv("META_PATH",  "artifacts/model_meta.json")
 
 FEATURE_COLS = [
     "tenure_months", "monthly_charges", "total_charges",
@@ -40,7 +40,7 @@ def convert(pkl_path: str, onnx_path: str):
     with open(onnx_path, "wb") as f:
         f.write(onnx_model.SerializeToString())
 
-    print(f"ONNX saved → {onnx_path}  ({os.path.getsize(onnx_path)/1024:.1f} KB)")
+    print(f"ONNX saved -> {onnx_path}  ({os.path.getsize(onnx_path)/1024:.1f} KB)")
     return onnx_path
 
 

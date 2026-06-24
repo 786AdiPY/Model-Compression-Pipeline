@@ -11,9 +11,9 @@ import onnxruntime as ort
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, field_validator
 
-MODEL_PKL  = os.getenv("MODEL_PKL",  "/artifacts/model.pkl")
-MODEL_ONNX = os.getenv("MODEL_ONNX", "/artifacts/model_fp32.onnx")
-MODEL_TRT  = os.getenv("MODEL_TRT",  "/artifacts/model_int8.trt")
+MODEL_PKL  = os.getenv("MODEL_PKL",  "artifacts/model.pkl")
+MODEL_ONNX = os.getenv("MODEL_ONNX", "artifacts/model_fp32.onnx")
+MODEL_TRT  = os.getenv("MODEL_TRT",  "artifacts/model_int8.trt")
 
 FEATURE_COLS = [
     "tenure_months", "monthly_charges", "total_charges",

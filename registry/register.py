@@ -7,11 +7,11 @@ from mlflow.tracking import MlflowClient
 
 TRACKING_URI    = os.getenv("MLFLOW_TRACKING_URI", "http://mlflow:5000")
 EXPERIMENT      = os.getenv("MLFLOW_EXPERIMENT",   "xgb-churn-compression")
-RESULTS_PATH    = os.getenv("RESULTS_PATH",         "/artifacts/benchmark_results.json")
-GATE_REPORT     = os.getenv("GATE_REPORT",          "/artifacts/gate_report.json")
-MODEL_PKL       = os.getenv("MODEL_PKL",            "/artifacts/model.pkl")
-MODEL_ONNX      = os.getenv("MODEL_ONNX",           "/artifacts/model_fp32.onnx")
-MODEL_TRT       = os.getenv("MODEL_TRT",            "/artifacts/model_int8.trt")
+RESULTS_PATH    = os.getenv("RESULTS_PATH",         "artifacts/benchmark_results.json")
+GATE_REPORT     = os.getenv("GATE_REPORT",          "artifacts/gate_report.json")
+MODEL_PKL       = os.getenv("MODEL_PKL",            "artifacts/model.pkl")
+MODEL_ONNX      = os.getenv("MODEL_ONNX",           "artifacts/model_fp32.onnx")
+MODEL_TRT       = os.getenv("MODEL_TRT",            "artifacts/model_int8.trt")
 REGISTRY_NAME   = os.getenv("REGISTRY_NAME",        "churn-detector")
 
 PRIORITY = ["trt_int8", "onnx_fp32", "pkl_xgboost", "trt_int8_fallback_onnx"]
@@ -56,6 +56,9 @@ def register_model(best: dict, results: list, gate: dict):
 
     run_id = runs[0].info.run_id
 
+    import pickle
+    import xgboost as xgb
+
     with mlflow.start_run(run_id=run_id):
         # Log final benchmark + gate artifacts
         mlflow.log_artifact(RESULTS_PATH, artifact_path="benchmark")
@@ -67,6 +70,11 @@ def register_model(best: dict, results: list, gate: dict):
         mlflow.log_metric("best_model_accuracy",   best["accuracy"])
         mlflow.log_metric("best_model_auc",        best["auc"])
         mlflow.set_tag("best_compressed_model", best["model"])
+
+        # Log the pkl model so artifact path exists for registration
+        with open(MODEL_PKL, "rb") as f:
+            model = pickle.load(f)
+        mlflow.xgboost.log_model(model, artifact_path="model")
 
     # Register model artifact
     artifact_uri = f"runs:/{run_id}/model"
@@ -96,7 +104,7 @@ def register_model(best: dict, results: list, gate: dict):
         archive_existing_versions=True,
     )
 
-    print(f"\nRegistered '{REGISTRY_NAME}' v{model_version.version} → Production")
+    print(f"\nRegistered '{REGISTRY_NAME}' v{model_version.version} -> Production")
     print(f"Best model: {best['model']}")
     print(f"Run ID: {run_id}")
 

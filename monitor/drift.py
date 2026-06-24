@@ -8,9 +8,9 @@ import json
 import numpy as np
 import pandas as pd
 
-TRAIN_STATS_PATH = os.getenv("TRAIN_STATS_PATH", "/artifacts/model_train_stats.json")
-INCOMING_CSV     = os.getenv("INCOMING_CSV",     "/data/test.csv")   # proxy for production traffic
-DRIFT_REPORT_OUT = os.getenv("DRIFT_REPORT_OUT", "/artifacts/drift_report.json")
+TRAIN_STATS_PATH = os.getenv("TRAIN_STATS_PATH", "artifacts/model_train_stats.json")
+INCOMING_CSV     = os.getenv("INCOMING_CSV",     "data/test.csv")
+DRIFT_REPORT_OUT = os.getenv("DRIFT_REPORT_OUT", "artifacts/drift_report.json")
 PSI_WARN         = float(os.getenv("PSI_WARN",  "0.1"))   # moderate drift
 PSI_ALERT        = float(os.getenv("PSI_ALERT", "0.2"))   # severe drift
 N_BINS           = int(os.getenv("N_BINS", "10"))

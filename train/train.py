@@ -15,7 +15,7 @@ from sklearn.model_selection import StratifiedKFold
 TRACKING_URI = os.getenv("MLFLOW_TRACKING_URI", "http://mlflow:5000")
 EXPERIMENT   = os.getenv("MLFLOW_EXPERIMENT", "xgb-churn-compression")
 DATA_DIR     = os.getenv("DATA_DIR", "/data")
-MODEL_OUT    = os.getenv("MODEL_OUT", "/artifacts/model.pkl")
+MODEL_OUT    = os.getenv("MODEL_OUT", "artifacts/model.pkl")
 
 PARAMS = {
     "n_estimators":     int(os.getenv("N_ESTIMATORS",  "300")),

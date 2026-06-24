@@ -8,11 +8,11 @@ import pandas as pd
 import onnxruntime as ort
 from sklearn.metrics import accuracy_score, roc_auc_score
 
-MODEL_PKL   = os.getenv("MODEL_PKL",   "/artifacts/model.pkl")
-MODEL_ONNX  = os.getenv("MODEL_ONNX",  "/artifacts/model_fp32.onnx")
-MODEL_TRT   = os.getenv("MODEL_TRT",   "/artifacts/model_int8.trt")
-TEST_CSV    = os.getenv("TEST_CSV",    "/data/test.csv")
-RESULTS_OUT = os.getenv("RESULTS_OUT", "/artifacts/benchmark_results.json")
+MODEL_PKL   = os.getenv("MODEL_PKL",   "artifacts/model.pkl")
+MODEL_ONNX  = os.getenv("MODEL_ONNX",  "artifacts/model_fp32.onnx")
+MODEL_TRT   = os.getenv("MODEL_TRT",   "artifacts/model_int8.trt")
+TEST_CSV    = os.getenv("TEST_CSV",    "data/test.csv")
+RESULTS_OUT = os.getenv("RESULTS_OUT", "artifacts/benchmark_results.json")
 WARMUP      = int(os.getenv("WARMUP",  "20"))
 RUNS        = int(os.getenv("RUNS",    "200"))
 
@@ -161,7 +161,7 @@ def main():
     with open(RESULTS_OUT, "w") as f:
         json.dump(results, f, indent=2)
 
-    print(f"\nResults saved → {RESULTS_OUT}")
+    print(f"\nResults saved -> {RESULTS_OUT}")
 
     # Summary table
     print("\n{:<30} {:>12} {:>10} {:>8} {:>12}".format(

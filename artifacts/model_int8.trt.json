@@ -1,0 +1,1 @@
+{"fallback": true, "use_onnx": "artifacts/model_fp32.onnx"}

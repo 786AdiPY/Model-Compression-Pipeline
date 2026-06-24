@@ -1,0 +1,26 @@
+{
+  "baseline": "pkl_xgboost",
+  "checks": [
+    {
+      "model": "onnx_fp32",
+      "acc_drop": 0.0,
+      "auc_drop": 0.0,
+      "acc_threshold": 0.01,
+      "auc_threshold": 0.01,
+      "passed": true,
+      "latency_ms": 10.734,
+      "speedup": 0.36
+    },
+    {
+      "model": "trt_int8_fallback_onnx",
+      "acc_drop": 0.0,
+      "auc_drop": 0.0,
+      "acc_threshold": 0.01,
+      "auc_threshold": 0.01,
+      "passed": true,
+      "latency_ms": 10.465,
+      "speedup": 0.36
+    }
+  ],
+  "passed": true
+}

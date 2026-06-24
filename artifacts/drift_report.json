@@ -1,0 +1,59 @@
+{
+  "features": {
+    "tenure_months": {
+      "psi": 0.0482,
+      "status": "ok"
+    },
+    "monthly_charges": {
+      "psi": 0.0664,
+      "status": "ok"
+    },
+    "total_charges": {
+      "psi": 0.2056,
+      "status": "alert"
+    },
+    "num_products": {
+      "psi": 6.1037,
+      "status": "alert"
+    },
+    "support_calls": {
+      "psi": 2.4585,
+      "status": "alert"
+    },
+    "payment_delay_days": {
+      "psi": 0.0765,
+      "status": "ok"
+    },
+    "contract_type": {
+      "psi": 8.9018,
+      "status": "alert"
+    },
+    "internet_service": {
+      "psi": 8.9024,
+      "status": "alert"
+    },
+    "online_security": {
+      "psi": 10.4979,
+      "status": "alert"
+    },
+    "tech_support": {
+      "psi": 10.498,
+      "status": "alert"
+    }
+  },
+  "summary": {
+    "mean_psi": 4.7759,
+    "alert_features": [
+      "total_charges",
+      "num_products",
+      "support_calls",
+      "contract_type",
+      "internet_service",
+      "online_security",
+      "tech_support"
+    ],
+    "warn_features": [],
+    "overall_status": "alert",
+    "n_incoming": 2000
+  }
+}

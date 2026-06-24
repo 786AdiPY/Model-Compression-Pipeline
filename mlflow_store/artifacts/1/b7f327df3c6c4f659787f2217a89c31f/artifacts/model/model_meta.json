@@ -1,0 +1,18 @@
+{
+  "feature_cols": [
+    "tenure_months",
+    "monthly_charges",
+    "total_charges",
+    "num_products",
+    "support_calls",
+    "payment_delay_days",
+    "contract_type",
+    "internet_service",
+    "online_security",
+    "tech_support"
+  ],
+  "run_id": "b7f327df3c6c4f659787f2217a89c31f",
+  "test_accuracy": 0.9705,
+  "test_auc": 0.9907149734629656,
+  "test_f1": 0.8409703504043127
+}
